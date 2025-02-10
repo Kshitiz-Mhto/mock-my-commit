@@ -2,7 +2,7 @@
 <img src="./assets/logo.png" alt="mock-my-commit logo" width=280>
 </p>
 
-**mock-my-commit**: A Git commit message validator that roasts your bad commit messages with sarcastic, passive-aggressive one-liners. Powered by the Mistral text generation model API, this tool ensures you never write another "fixed stuff" commit without feeling properly judged.
+Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages clearly needed a reality check. Powered by the Mistral text generation model API, this tool ensures that no matter how lazy your commits are, you'll get the judgment you deserve🤐.
 
 ---
 
