@@ -67,6 +67,54 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
 
 ---
 
+## Local setup
+
+### Prerequisites
+
+- **Linux OS**  
+- **Go (version 1.22 or higher):**  
+  Install from the official [Go installation guide](https://go.dev/doc/install).
+- **Make:**  
+  Install using your package manager (e.g., `sudo apt-get install make` on Debian/Ubuntu).
+- **Mistral API Key:**  
+  Generate your API key from the [Mistral API Keys console](https://console.mistral.ai/api-keys/).
+
+### Installation
+
+1. Navigate to the project repo and run 
+
+```bash
+make build
+```
+
+2. Create a symlink using 
+
+```bash
+sudo ln -s /path/to/mock-my-commit/bin/mock-my-commit /usr/local/bin/mock-my-commit
+```
+
+3. Test the Executable
+
+```bash
+mock-my-commit
+```
+
+4. View the Manual
+
+```bash
+mock-my-commit -h
+```
+
+### Flowchart
+
+> *setup-flowdiagram*
+
+<p align="center">
+  <img src="./assets/setup_flow.png" alt="mock-my-commit rub-hho" width="800">
+</p>
+
+
+
 ## Makefile Documentation
 
 This `Makefile` provides an easy interface to build, test, install, and clean the mock-my-commit project. It automates common tasks required for the development and deployment of the project.
