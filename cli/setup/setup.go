@@ -39,7 +39,8 @@ var (
 	SetupCMD   = &cobra.Command{
 		Use:     "setup",
 		Aliases: []string{"set"},
-		Short:   "Subcommand to setup the API key for the API Client.",
+		Short:   "Subcommand to setup the API key for the API Client. A propmt will be provided to enter the API key.",
+		Example: "mock-my-commit setup",
 		Run:     runSetupForTool,
 	}
 )

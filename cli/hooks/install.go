@@ -20,9 +20,10 @@ var (
 	global          bool
 	hookPath        string
 	InstallHooksCmd = &cobra.Command{
-		Use:   "install",
-		Short: "Subcommand to install hooks for commit messages either local or global level.",
-		Run:   runInstallHooksSetupCmd,
+		Use:     "install",
+		Short:   "Subcommand to install hooks for commit messages either local or global level.",
+		Example: "mock-my-commit install --local / mock-my-commit install --global",
+		Run:     runInstallHooksSetupCmd,
 	}
 )
 
