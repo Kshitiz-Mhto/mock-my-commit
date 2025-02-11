@@ -18,6 +18,15 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 
 ---
 
+### Installation
+
+- **Linux OS**  
+- **Go (version 1.22 or higher)**  
+
+```bash
+go install github.com/Kshitiz-Mhto/mock-my-commit@latest
+```
+
 ### Project: mock-my-commit
 
 This project, `mock-my-commit`, is built using the Go programming language. Below is a list of the commands offered by this tool.
