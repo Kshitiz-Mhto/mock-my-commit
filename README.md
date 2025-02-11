@@ -6,6 +6,20 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 
 ---
 
+### Installation
+
+> Reqyuired
+
+- **Linux OS**  
+- **Go (version 1.22 or higher):** [Go installation guide](https://go.dev/doc/install)
+- **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/)
+
+```bash
+go install github.com/Kshitiz-Mhto/mock-my-commit@latest
+```
+
+---
+
 ### Features
 
 - **Validates Git Commit Messages**: Ensures commit messages meet best practices before Git registers the commit.
@@ -17,15 +31,6 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 - **Seamless Git Hook Integration**: Works as a `commit-msg` hook to validate messages before they are committed.
 
 ---
-
-### Installation
-
-- **Linux OS**  
-- **Go (version 1.22 or higher)**  
-
-```bash
-go install github.com/Kshitiz-Mhto/mock-my-commit@latest
-```
 
 ### Project: mock-my-commit
 
@@ -138,7 +143,7 @@ This `Makefile` provides an easy interface to build, test, install, and clean th
 
 - **INSTALL_DIR**: Specifies where the binary should be installed. By default, it installs to `$HOME/go/bin` if the `GOBIN` environment variable is not set.
 
-## Targets
+### Targets
 
 The Makefile has the following targets that automate the build process:
 
@@ -146,63 +151,28 @@ The Makefile has the following targets that automate the build process:
 
 - **Description**: Builds the binary from the main Go file and outputs it to the `bin` directory.
 
-- **Commands**:
-    1. Creates the `bin` directory if it doesn't already exist.
-
-    2. Runs the `go build` command to compile the Go project into a binary named `mock-my-commit`.
-
-    3. Outputs the path to the built binary.
-
-- **Usage**: 
-
-    ```bash
-    make build
-    ```
+```bash
+make build
+```
 
 #### `test`
 
 - **Description**: Runs the tests for the project using `go test`.
 
-- **Commands**:
-
-    1. Executes the `go test` command on the entire project (`./...`).
-
-    2. Prints the results of the tests to the terminal.
-
-- **Usage**: 
-
-    ```bash
-    make test
-    ```
+```bash
+make test
+```
 
 ### `install`
 
 - **Description**: Builds the project and installs the binary to the `GOBIN` directory.
 
-- **Commands**:
-
-    1. Runs the `build` target to compile the binary.
-
-    2. Installs the binary to the directory specified by `GOBIN`.
-
-- **Usage**:
-
-    ```bash
-    make install
-    ```
+```bash
+make install
+```
 
 ### `clean`
 
-- **Description**: Cleans up the build directory by removing the `bin` directory and its contents.
-
-- **Commands**:
-
-    1. Deletes the `bin` directory.
-
-    2. Outputs a message when cleanup is complete.
-
-- **Usage**: 
-
-    ```bash
-    make clean
-    ```
+  ```bash
+  make clean
+  ```
