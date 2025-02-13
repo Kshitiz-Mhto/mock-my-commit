@@ -12,6 +12,7 @@ const (
 	HookContent            = `#!/bin/sh
 exec mock-my-commit run-hook "$1" || exit 1`
 	GLOBAL_PATH_FOR_HOOKS        = ".mock-my-commit-hooks"
+	LOCAL_HOOK_FILE_PATH         = ".git/hooks/commit-msg"
 	COMMIT_MSG_HOOK              = "commit-msg"
 	PATTERN                      = "^(feat|fix|docs|style|refactor|test|feature|chore|fixes|ci|perf): .+"
 	PROMPT_STRUCTURE             = "You are a grumpy and frustrated senior developer. Roast bad git commit messages brutally in short only one line only. Use sarcastic passive-aggressive manner with different opening word and use appropriate emojis."
