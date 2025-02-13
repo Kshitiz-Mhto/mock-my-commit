@@ -191,7 +191,7 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
   ### Installation
 
   1. **Build the Project**  
-     Open Command Prompt/PowerShell in the project directory and run:
+     Open PowerShell in the project directory and run:
      ```bash
      go build -o bin/mock-my-commit.exe main.go
      ```
@@ -207,10 +207,6 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
        New-Item -ItemType SymbolicLink -Path "$env:SYSTEMROOT\System32\mock-my-commit.exe" -Target "C:\full\path\to\bin\mock-my-commit.exe"
        ```
 
-       ```cmd
-       :: Command Prompt (Admin)
-       mklink "%SYSTEMROOT%\System32\mock-my-commit.exe" "C:\full\path\to\bin\mock-my-commit.exe"
-       ```
   3. **Test the Executable**
      ```bash
      mock-my-commit
@@ -223,7 +219,7 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
 
   > **Note:** 
 
-  > - For symlinks, run PowerShell or Command Prompt as Administrator
+  > - For symlinks, run PowerShell as Administrator
   > - Replace `C:\full\path\to\bin` with your actual binary path
   > - `$env:SYSTEMROOT`/`%SYSTEMROOT%` automatically resolves to `C:\Windows` (or system root)
 
