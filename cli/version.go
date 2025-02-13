@@ -32,7 +32,7 @@ var (
 			buildDate := utility.GetBuildDate()
 			switch {
 			case verbose:
-				fmt.Print(logo)
+				fmt.Print(utility.Yellow(logo))
 				fmt.Printf("CLI version: v%s\n", CLI_VERSION)
 				fmt.Printf("Go version (client): %s\n", runtime.Version())
 				if buildDate != "" {

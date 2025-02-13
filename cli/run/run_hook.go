@@ -4,29 +4,17 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
 	"github.com/Kshitiz-Mhto/mock-my-commit/cli/setup"
+	"github.com/Kshitiz-Mhto/mock-my-commit/pkg/env"
 	"github.com/Kshitiz-Mhto/mock-my-commit/utility"
 	"github.com/enescakir/emoji"
 	"github.com/gage-technologies/mistral-go"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/rand"
-)
-
-const (
-	PATTERN                      = "^(feat|fix|docs|style|refactor|test|feature|chore|fixes|ci|perf): .+"
-	PROMPT_STRUCTURE             = "You are a grumpy and frustrated senior developer. Roast bad git commit messages brutally in short only one line only. Use sarcastic passive-aggressive manner with different opening word and use appropriate emojis."
-	PROMPT_CONTENT               = "You are a grumpy senior developer. Roast  meaningless, unclear, or gibberish commit messages brutally in short only one line only. Use sarcastic passive-aggressive manner with different unique word and use appropriate emojis."
-	PROMPT_CHECK_QUALITY         = "Evaluate the git commit message. If it clearly describes a git commit message, respond with 'YES'. Otherwise, respond with 'NO'."
-	COMMIT_MSG_LENTH_MIN         = 20
-	COMMIT_MSG_LENTH_MAX         = 70
-	MISTRAL_lARGE_MODEL_VERSION  = "mistral-large-latest"
-	MISTRAL_MEDIUM_MODEL_VERSION = "mistral-medium-latest"
-	MISTRAL_SMALL_MODEL_VERSION  = "mistral-small-latest"
-	SYS_ROLE                     = "system"
-	USER_ROLE                    = "user"
 )
 
 var (
@@ -36,11 +24,22 @@ var (
 		Short:   "Subcommand that runs the commit hook to process the commit message.",
 		Run:     runHookExecutionCmd,
 	}
-	commitMsgRegex = regexp.MustCompile(PATTERN)
+	commitMsgRegex = regexp.MustCompile(env.PATTERN)
 )
 
 func runHookExecutionCmd(cmd *cobra.Command, args []string) {
-	RunHook()
+	switch runtime.GOOS {
+	case env.LINUX_OS, env.MAC_OS, env.WINDOWS_OS:
+		RunHook()
+	default:
+		clickableURL := fmt.Sprintf("\033]8;;%s\033\\%s\033]8;;\033\\", env.GITHUB_REPO_ISSUE_LIST, env.GITHUB_REPO_ISSUE_LIST)
+
+		utility.Error("Unsupported platform/OS. please raise a feature request in our repository [%s]. Thank you!", clickableURL)
+
+		if err := utility.OpenInBrowser(env.GITHUB_REPO_ISSUE_LIST); err != nil {
+			utility.Info("Please manually visit: %s", env.GITHUB_REPO_ISSUE_LIST)
+		}
+	}
 }
 
 func RunHook() {
@@ -53,14 +52,14 @@ func RunHook() {
 
 	// validate the commit message.
 	if ShouldBlockCommit(msg) {
-		roast := GenerateRoast(msg, PROMPT_STRUCTURE)
+		roast := GenerateRoast(msg, env.PROMPT_STRUCTURE)
 		fmt.Println(roast)
 		os.Exit(1)
 	}
 
 	// validate the meaningless commit message
 	if ShouldBlockContent(msg) {
-		roast := GenerateRoast(msg, PROMPT_CONTENT)
+		roast := GenerateRoast(msg, env.PROMPT_CONTENT)
 		fmt.Println(roast)
 		os.Exit(1)
 	}
@@ -82,7 +81,7 @@ func GetCommitMessage() (string, error) {
 }
 
 func ShouldBlockCommit(msg string) bool {
-	if len(msg) < COMMIT_MSG_LENTH_MIN || len(msg) > COMMIT_MSG_LENTH_MAX {
+	if len(msg) < env.COMMIT_MSG_LENTH_MIN || len(msg) > env.COMMIT_MSG_LENTH_MAX {
 		return true
 	}
 
@@ -111,14 +110,14 @@ func IsMessageMeaningful(msg string) bool {
 	client := mistral.NewMistralClientDefault(apiKey)
 
 	chatRes, err := client.Chat(
-		MISTRAL_lARGE_MODEL_VERSION,
+		env.MISTRAL_lARGE_MODEL_VERSION,
 		[]mistral.ChatMessage{
 			{
-				Role:    SYS_ROLE,
-				Content: PROMPT_CHECK_QUALITY,
+				Role:    env.SYS_ROLE,
+				Content: env.PROMPT_CHECK_QUALITY,
 			},
 			{
-				Role:    USER_ROLE,
+				Role:    env.USER_ROLE,
 				Content: fmt.Sprintf("Commit message: %s'", msg),
 			},
 		},
@@ -142,13 +141,13 @@ func GenerateRoast(msg, prompt string) string {
 
 	client := mistral.NewMistralClientDefault(apiKey)
 	chatRes, err := client.Chat(
-		MISTRAL_lARGE_MODEL_VERSION, []mistral.ChatMessage{
+		env.MISTRAL_lARGE_MODEL_VERSION, []mistral.ChatMessage{
 			{
-				Role:    SYS_ROLE,
+				Role:    env.SYS_ROLE,
 				Content: prompt,
 			},
 			{
-				Role:    USER_ROLE,
+				Role:    env.USER_ROLE,
 				Content: fmt.Sprintf("Commit message: %s'", msg),
 			},
 		}, &mistral.ChatRequestParams{
