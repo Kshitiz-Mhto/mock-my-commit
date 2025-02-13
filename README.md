@@ -14,24 +14,7 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 - **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/)
 
 <details>
-  <summary>For Linux OS</summary>
-
-  ```bash
-  go install github.com/Kshitiz-Mhto/mock-my-commit@latest
-  ```
-</details>
-
-<details>
-  <summary>For Mac OS</summary>
-
-  ```bash
-  go install github.com/Kshitiz-Mhto/mock-my-commit@latest
-  ```
-</details>
-
-
-<details>
-  <summary>For Windows OS</summary>
+  <summary>For Linux OS, Mac OS and Windows</summary>
 
   ```bash
   go install github.com/Kshitiz-Mhto/mock-my-commit@latest
