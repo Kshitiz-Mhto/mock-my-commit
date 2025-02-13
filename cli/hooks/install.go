@@ -16,6 +16,7 @@ import (
 var (
 	local           bool
 	global          bool
+	unset           bool
 	hookPath        string
 	InstallHooksCmd = &cobra.Command{
 		Use:     "install",
@@ -28,8 +29,14 @@ var (
 func runInstallHooksSetupCmd(cmd *cobra.Command, args []string) {
 	switch runtime.GOOS {
 	case env.LINUX_OS, env.MAC_OS:
+		if unset {
+			runUnsettingTheHooks()
+		}
 		runInstallHookSetupForLinuxAndUnix()
 	case env.WINDOWS_OS:
+		if unset {
+			runUnsettingTheHooks()
+		}
 		runInstallHookSetupForWindows()
 	default:
 		clickableURL := fmt.Sprintf("\033]8;;%s\033\\%s\033]8;;\033\\", env.GITHUB_REPO_ISSUE_LIST, env.GITHUB_REPO_ISSUE_LIST)
@@ -77,9 +84,27 @@ func runInstallHookSetupForWindows() {
 	}
 }
 
+func runUnsettingTheHooks() {
+	if local && global {
+		utility.Error("❌ Cannot specify both --local and --global flags.")
+		os.Exit(1)
+	}
+
+	switch {
+	case local:
+		unsetLocalHooks()
+	case global:
+		unsetGlobalHooks()
+	default:
+		utility.Error("❌ Please specify either --local or --global.")
+		os.Exit(1)
+	}
+}
+
 func init() {
 	InstallHooksCmd.Flags().BoolVarP(&local, "local", "", false, "Indicates the  hook setup/installation locally, specific to a repository's .git repository.")
 	InstallHooksCmd.Flags().BoolVarP(&global, "global", "", false, "Indicates the hook setup/installation globally, specific to parent .git repository.")
+	InstallHooksCmd.Flags().BoolVarP(&unset, "unset", "", false, "Indicates to unset the hooks.")
 }
 
 func SetupLocalHooksForLinuxAndMac(local bool) {
@@ -134,7 +159,7 @@ func SetupGlobalHooksForLinuxAndMac(global bool) {
 		os.Exit(1)
 	}
 
-	utility.Success("✅ Hooks installed succesfully!!")
+	utility.Success("✅ Hooks installed succesfully!! at %s", hookPath)
 }
 
 func SetupLocalHooksForWindows(local bool) {
@@ -199,4 +224,26 @@ func SetupGlobalHooksForWindows(global bool) {
 	}
 
 	utility.Success("✅ Global hooks installed successfully! Path: %s", hookPath)
+}
+
+func unsetLocalHooks() {
+	err := os.Remove(env.LOCAL_HOOK_FILE_PATH)
+	if err != nil {
+		utility.Error("❌ Local hooks cannot be unset because it doesnot exist: %v", err)
+		os.Exit(1)
+	}
+
+	utility.Success("Local hooks is unset successfully!!")
+	os.Exit(1)
+}
+
+func unsetGlobalHooks() {
+	_, err := exec.Command("git", "config", "--global", "--unset", "core.hooksPath").Output()
+	if err != nil {
+		utility.Error("❌ Gloabl hooks cannot be unset because it doesnot exist: %v", err)
+		os.Exit(1)
+	}
+
+	utility.Success("Global hooks is unset successfully!!")
+	os.Exit(1)
 }
