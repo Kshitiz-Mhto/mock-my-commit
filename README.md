@@ -8,13 +8,17 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 
 ### Installation
 
+option 1: [DOWNLOAD](https://github.com/Kshitiz-Mhto/mock-my-commit/releases)
+
+option 2:
+
 > Required
 
 - **Go (version 1.22 or higher):** [Go installation guide](https://go.dev/doc/install)
 - **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/)
 
 <details>
-  <summary>For Linux OS, Mac OS and Windows</summary>
+  <summary>For Linux, Mac OS and Windows</summary>
 
   ```bash
   go install github.com/Kshitiz-Mhto/mock-my-commit@latest
