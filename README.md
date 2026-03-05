@@ -2,7 +2,7 @@
 <img src="./assets/logo.png" alt="mock-my-commit logo" width=280>
 </p>
 
-Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages clearly needed a reality check. Powered by the Mistral text generation model API, this tool ensures that no matter how lazy your commits are, you'll get the judgment you deserve🤐.
+Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages clearly needed a reality check. Powered by the GEMINI text generation model API, this tool ensures that no matter how lazy your commits are, you'll get the judgment you deserve🤐.
 
 ---
 
@@ -11,7 +11,7 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 > Required
 
 - **Go (version 1.22 or higher):** [Go installation guide](https://go.dev/doc/install)
-- **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/)
+- **GEMINI API Key:** [GEMINI API Keys console](https://aistudio.google.com/app/apikey)
 
 <details>
   <summary>For Linux OS, Mac OS and Windows</summary>
@@ -30,7 +30,7 @@ Introducing **mock-my-commit** tool because your 'fixed stuff' commit messages c
 
 - **Cross-Platform Support**:  Supports **Linux**, **Mac** and **Windows** integration.
 
-- **Sarcastic Reviews**: Generates passive-aggressive feedback using Mistral's API for poorly crafted messages.
+- **Sarcastic Reviews**: Generates passive-aggressive feedback using GEMINI's API for poorly crafted messages.
 
 - **Seamless Integration**: Functions as a Git `commit-msg` hook to validate messages within your existing workflow.
 
@@ -44,10 +44,12 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
   <img src="./assets/home.png" alt="mock-my-commit Logo" width="800">
 </p>
 
-> *Demo*
+## Demo
 
 <p align="center">
-  <img src="./assets/working.png" alt="mock-my-commit demo" width="800">
+  <a href="https://github.com/user-attachments/assets/0cbb068a-c37b-4798-bb22-985c0189bede">
+    Watch Demo
+  </a>
 </p>
 
 ---
@@ -80,7 +82,6 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
 - [term](https://golang.org/x/term) – Terminal handling utilities.
 - [emoji](https://github.com/enescakir/emoji) – For adding emoji reactions to roasts.
 - [terminfo](https://github.com/xo/terminfo) – Terminal capabilities information.
-- [mistral-go](https://github.com/gage-technologies/mistral-go) – API client for interacting with the Mistral text generation model.
 - [gookit/color](https://github.com/gookit/color) – Colored terminal output.
 
 ---
@@ -104,7 +105,7 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
   
   - **Go (version 1.22 or higher):** [Go installation guide](https://go.dev/doc/install).
   - **Make:** Install using (e.g., `sudo apt-get install make` on Debian/Ubuntu).
-  - **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/).
+  - **GEMINI API Key:** [GEMINI API Keys console](https://aistudio.google.com/app/apikey).
 
   ### Installation
 
@@ -140,7 +141,7 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
   
   - **Go (version 1.22 or higher)**: Install via [Homebrew](https://brew.sh/) (`brew install go`) or [official package](https://go.dev/doc/install)
   - **Make**: Pre-installed with Xcode Command Line Tools (run `xcode-select --install` if missing)
-  - **Mistral API Key**: [Get from Mistral console](https://console.mistral.ai/api-keys/)
+  - **GEMINI API Key**: [Get from GEMINI console](https://aistudio.google.com/app/apikey)
 
   ### Installation
 
@@ -169,7 +170,7 @@ This project, `mock-my-commit`, is built using the Go programming language. Belo
   ### Prerequisites
   
   - **Go (version 1.22 or higher):** [Go installation guide](https://go.dev/doc/install)
-  - **Mistral API Key:** [Mistral API Keys console](https://console.mistral.ai/api-keys/)
+  - **GEMINI API Key:** [GEMINI API Keys console](https://aistudio.google.com/app/apikey)
 
   ### Installation
 
