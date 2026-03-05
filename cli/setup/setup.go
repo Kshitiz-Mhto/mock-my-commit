@@ -101,8 +101,8 @@ func SetupAPIKeyForLinuxAndUnix() {
 		os.Exit(1)
 	}
 
-	if len(apiKey) != 32 {
-		utility.Error("❌ Invalid key format for Mistral API")
+	if len(apiKey) != 39 {
+		utility.Error("❌ Invalid key format for GEMINI API")
 		os.Exit(1)
 	}
 
@@ -131,8 +131,8 @@ func SetupAPIKeyForWindows() {
 		os.Exit(1)
 	}
 
-	if len(apiKey) != 32 {
-		utility.Error("❌ Invalid key format for Mistral API")
+	if len(apiKey) != 39 {
+		utility.Error("❌ Invalid key format for GEMINI API")
 		os.Exit(1)
 	}
 

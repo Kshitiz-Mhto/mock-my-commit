@@ -1,6 +1,7 @@
 package run
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -11,10 +12,11 @@ import (
 	"github.com/Kshitiz-Mhto/mock-my-commit/cli/setup"
 	"github.com/Kshitiz-Mhto/mock-my-commit/pkg/env"
 	"github.com/Kshitiz-Mhto/mock-my-commit/utility"
-	"github.com/enescakir/emoji"
-	"github.com/gage-technologies/mistral-go"
+	"github.com/google/generative-ai-go/genai"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/rand"
+	"google.golang.org/api/option"
 )
 
 var (
@@ -24,7 +26,14 @@ var (
 		Short:   "Subcommand that runs the commit hook to process the commit message.",
 		Run:     runHookExecutionCmd,
 	}
-	commitMsgRegex = regexp.MustCompile(env.PATTERN)
+	commitMsgRegex  = regexp.MustCompile(`^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\-]+\))?: [a-z].+`)
+	blockedMessages = map[string]bool{
+		"update":  true,
+		"fix":     true,
+		"changes": true,
+		"misc":    true,
+		"test":    true,
+	}
 )
 
 func runHookExecutionCmd(cmd *cobra.Command, args []string) {
@@ -57,12 +66,12 @@ func RunHook() {
 		os.Exit(1)
 	}
 
-	// validate the meaningless commit message
-	if ShouldBlockContent(msg) {
-		roast := GenerateRoast(msg, env.PROMPT_CONTENT)
-		fmt.Println(roast)
-		os.Exit(1)
-	}
+	// // validate the meaningless commit message
+	// if ShouldBlockContent(msg) {
+	// 	roast := GenerateRoast(msg, env.PROMPT_CONTENT)
+	// 	fmt.Println(roast)
+	// 	os.Exit(1)
+	// }
 
 	os.Exit(0)
 }
@@ -97,6 +106,11 @@ func ShouldBlockContent(msg string) bool {
 }
 
 func GetAPIKey() string {
+	_ = godotenv.Load()
+	if key := os.Getenv(env.GEMINI_API_KEY_ENV); key != "" {
+		return key
+	}
+
 	key, err := os.ReadFile(setup.ConfigFile)
 	if err != nil {
 		utility.Error("❌ Error reading API key: %v", err)
@@ -107,63 +121,61 @@ func GetAPIKey() string {
 
 func IsMessageMeaningful(msg string) bool {
 	apiKey := GetAPIKey()
-	client := mistral.NewMistralClientDefault(apiKey)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	chatRes, err := client.Chat(
-		env.MISTRAL_lARGE_MODEL_VERSION,
-		[]mistral.ChatMessage{
-			{
-				Role:    env.SYS_ROLE,
-				Content: env.PROMPT_CHECK_QUALITY,
-			},
-			{
-				Role:    env.USER_ROLE,
-				Content: fmt.Sprintf("Commit message: %s'", msg),
-			},
-		},
-		nil,
-	)
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	if err != nil {
+		utility.Error("❌ Error creating Gemini client: %v", err)
+		return false
+	}
+	defer client.Close()
 
+	model := client.GenerativeModel(env.GEMINI_MODEL)
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{genai.Text(env.PROMPT_CHECK_QUALITY)},
+	}
+
+	resp, err := model.GenerateContent(ctx, genai.Text(fmt.Sprintf("Commit message: %s", msg)))
 	if err != nil {
 		utility.Error("❌ Error checking message quality: %v", err)
 		return false
 	}
 
-	if len(chatRes.Choices) == 0 {
+	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
 		return false
 	}
-	response := strings.ToUpper(strings.TrimSpace(chatRes.Choices[0].Message.Content))
+
+	part := resp.Candidates[0].Content.Parts[0]
+	response := strings.ToUpper(strings.TrimSpace(fmt.Sprintf("%v", part)))
 	return strings.HasPrefix(response, "YES")
 }
 
 func GenerateRoast(msg, prompt string) string {
 	apiKey := GetAPIKey()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	client := mistral.NewMistralClientDefault(apiKey)
-	chatRes, err := client.Chat(
-		env.MISTRAL_lARGE_MODEL_VERSION, []mistral.ChatMessage{
-			{
-				Role:    env.SYS_ROLE,
-				Content: prompt,
-			},
-			{
-				Role:    env.USER_ROLE,
-				Content: fmt.Sprintf("Commit message: %s'", msg),
-			},
-		}, &mistral.ChatRequestParams{
-			Temperature: 1,
-			TopP:        1,
-			MaxTokens:   200,
-			SafePrompt:  false,
-		},
-	)
-
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return getFallbackRoast()
 	}
+	defer client.Close()
 
-	if len(chatRes.Choices) > 0 {
-		return fmt.Sprintf("%s %s", emoji.FirstPlaceMedal, chatRes.Choices[0].Message.Content)
+	model := client.GenerativeModel(env.GEMINI_MODEL)
+	model.SetTemperature(1.0)
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{genai.Text(fmt.Sprintf("%s The response must be strictly under %d words.", prompt, env.ROAST_WORD_LIMIT))},
+	}
+
+	resp, err := model.GenerateContent(ctx, genai.Text(fmt.Sprintf("Commit message: %s", msg)))
+	if err != nil {
+		fmt.Println(err.Error())
+		return getFallbackRoast()
+	}
+
+	if len(resp.Candidates) > 0 && resp.Candidates[0].Content != nil && len(resp.Candidates[0].Content.Parts) > 0 {
+		return fmt.Sprintf("%v", resp.Candidates[0].Content.Parts[0])
 	}
 
 	return getFallbackRoast()
@@ -175,13 +187,10 @@ func getFallbackRoast() string {
 		"Oh wow, another 'shit'. I'm sure this one won't educate anyone. 🤡",
 		"Commit messages like these make us question our civilization. 🏺",
 		"Oh good, another commit titled ‘Oops’—confidence inspiring. 👏",
-		"‘WIP’—which stands for ‘Will It Pass’? 🤞",
 		"This commit is so ugly even Git refuses to merge it. 🤢",
 		"If your code were a novel, this commit would be the plot hole. 📖",
-		"‘Commit message for clarity’—and now no one understands it. 🔍",
 		"Your commit history is a crime scene, and this one is the murder weapon. 🔪",
 		"Ah, another commit where we pretend everything is fine. 🔥🐶",
-		"‘Fixed typo’—in the commit message, or the code? 🤔",
 		"This commit looks like it was written under duress. 😰",
 		"I see you’ve embraced the ‘Commit first, think later’ methodology. 🎭",
 		"The best part of this commit is that it can be reverted. 🔄",
@@ -193,5 +202,5 @@ func getFallbackRoast() string {
 
 	rand.Seed(uint64(time.Now().UnixNano()))
 
-	return string(emoji.FirstPlaceMedal) + " " + fallbackRoastArray[rand.Intn(len(fallbackRoastArray))]
+	return fallbackRoastArray[rand.Intn(len(fallbackRoastArray))]
 }
